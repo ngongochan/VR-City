@@ -18,9 +18,9 @@ This is an interactive virtual reality city simulation game where players can ex
 
 
 ## 🚀 Installation
-- Download this repository
-- Open the project folder inside Unity
-- Load the scene
+- Download the `progress.unitypackage` file
+- Open Unity Hub
+- Load the file into Unity Editor
 - Push **Play** to play
 
 
