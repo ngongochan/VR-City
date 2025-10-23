@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using BNG;
 
+// theoretically this is supposed to work but is not
+
+
 // left trigger: brake (StopScooter())
 // right trigger: speed (MoveScooterForward())
 

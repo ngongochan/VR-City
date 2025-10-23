@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 
 // made some changes to Matt's scripts
+// this works but is currently hardcoded
 
 public class testMyScooter : GrabbableEvents
 {
@@ -55,6 +56,7 @@ public class testMyScooter : GrabbableEvents
     {
         if (rightHand)
         {
+            // consider changing to rb.AddForce with force, instead of transform.position with speed
             speed = 5;
             transform.position += transform.forward * speed * Time.deltaTime;
 
