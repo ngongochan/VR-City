@@ -1,14 +1,15 @@
 // using BNG;
 // using UnityEngine;
 
-// // SteeringWheel Vertical
-// // Matt's Scripts
 // public class Scooter : GrabbableEvents
 // {
 //     public float speed = 5f;
 //     public SteeringWheel steering;
+
 //     public Transform throttleReference;
+
 //     private bool isHeld;
+
 //     private Grabber rightHand;
 //     public InputBridge bridge;
 
@@ -42,11 +43,19 @@
 //     public void Update()
 //     {
 //         float speed = 0;
+
 //         if (rightHand != null)
 //         {
-//             float speedPercentage = WristAngle(throttleReference.rotation, rightHand.transform.rotation) / 180f;
+//             float maxAngle = 45;
+//             float speedPercentage = Mathf.Clamp(0, 1, WristAngle(throttleReference.rotation, rightHand.transform.rotation) / maxAngle);
+
+//             speed = speedPercentage * maxSpeed;
+
+//             Debug.Log(speed);
 //             speed = speedPercentage * this.speed;
+
 //             brake = bridge.RightTrigger;
+
 //             Debug.Log(speedPercentage);
 //         }
 
@@ -57,9 +66,12 @@
 //         }
 //     }
 
-//     public float WristAngle(Quaternion reference, Quaternion hand)
+//     public float WristAngle(Quaternion defaultRotation, Quaternion hand)
 //     {
-//         Vector3 handForward = Vector3.ProjectOnPlane(hand * Vector3.forward, reference * Vector3.right);
-//         return Vector3.SignedAngle(reference * Vector3.forward, handForward, reference * -Vector3.right);
+//         Vector3 defaultDirection = defaultRotation * Vector3.forward;
+//         Vector3 flatWallNormal = defaultRotation * Vector3.right;
+//         Vector3 handDirection = Vector3.ProjectOnPlane(hand * Vector3.forward, flatWallNormal);
+
+//         return Vector3.SignedAngle(defaultDirection, handDirection, -flatWallNormal); // will return -180 -> 180, should clamp to a normal range
 //     }
 // }

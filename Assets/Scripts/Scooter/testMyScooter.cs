@@ -1,23 +1,32 @@
-// TestMyScooter.cs
-
 using BNG;
 using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 
-// should work
+// made some changes to Matt's scripts
 
-public class TestMyScooter : GrabbableEvents
+[DefaultExecutionOrder(-1000)]
+public class testMyScooter : GrabbableEvents
 {
-    public float force = 5f;
-    public float steeringForce;
+    public Transform root;
+    public AnimationCurve turningGraph;
+
+    public float maxSpeed = 5;
     public SteeringWheel steering;
-    private Grabber rightHand, leftHand;
-    public ParticleSystem driftingEffect;
+    private Grabber rightHand;
+
+    public Transform rayTransform;
+
     Rigidbody rb;
+
     public AudioClip honkAudioClip;
+
     public Light drivingLight;
 
-    void Start()
+
+    public float velocity;
+    public float acceleration;
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
@@ -33,37 +42,54 @@ public class TestMyScooter : GrabbableEvents
 
     public override void OnRelease()
     {
-        if (rightHand.HeldGrabbable != this.grab)
+        if (rightHand.HeldGrabbable == this.grab)
         {
             rightHand = null;
             Debug.Log("You just released the scooter");
         }
     }
 
-    public void FixedUpdate()
+    public void Update()
     {
-        MoveScooterForward();
-        Steer();
-        // else
-        // {
-        //     StopScooter();
-        // }
+        /*if (rayTransform)
+        {
+            Ray ray = new Ray(rayTransform.position, rayTransform.forward);
+
+            if (Physics.Raycast(ray, out var hit, 10))
+            {
+                Debug.DrawLine(ray.origin, hit.point);
+            }
+        }*/
+
+        
+        if (rightHand != null)
+        {
+            velocity += acceleration * Time.deltaTime;
+            velocity = Mathf.Clamp(velocity, 0, maxSpeed = 5);
+        }
+        else
+        {
+            velocity -= acceleration * Time.deltaTime;
+            velocity = Mathf.Clamp(velocity, 0, maxSpeed = 5);
+        }
+
+        if (velocity >= 0)
+        {
+            //rb.MovePosition(rb.position + transform.forward * speed * Time.deltaTime);
+            //rb.MoveRotation(Quaternion.AngleAxis(Time.deltaTime, transform.up) * rb.rotation);
+
+            root.Rotate(root.up, -steering.Angle * turningGraph.Evaluate(velocity) * Time.deltaTime);
+            root.position += root.forward * velocity * Time.deltaTime;
+        }
     }
 
     void MoveScooterForward()
     {
         if (rightHand)
         {
-            rb.AddForce(transform.forward * force, ForceMode.Acceleration);
+            root.position += transform.forward * velocity * Time.deltaTime;
         }
-        // if (driftingEffect && !driftingEffect.isPlaying)
-        // {
-        //     driftingEffect.Play();
-        // }
+        //rb.AddForce(transform.forward * force, ForceMode.Acceleration);
     }
-    void Steer()
-    {
-        Quaternion steeringAngle = Quaternion.Euler(Vector3.up * steeringForce * Time.DeltaTime);
-        rb.MoveRotation(rb.rotation * steeringAngle);
-    }
+
 }
