@@ -1,22 +1,26 @@
+// TestMyScooter.cs
+
 using BNG;
 using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 
-// made some changes to Matt's scripts
-// this works but is currently hardcoded
+// should work
 
-public class testMyScooter : GrabbableEvents
+public class TestMyScooter : GrabbableEvents
 {
-    public float speed;
+    public float force = 5f;
+    public float steeringForce;
     public SteeringWheel steering;
-    private Grabber rightHand;
-
+    private Grabber rightHand, leftHand;
     public ParticleSystem driftingEffect;
     Rigidbody rb;
-
     public AudioClip honkAudioClip;
-
     public Light drivingLight;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     public override void OnGrab(Grabber grabber)
     {
@@ -36,36 +40,30 @@ public class testMyScooter : GrabbableEvents
         }
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
-        speed = 0;
-        //if (rightHand != null)
-        //{
-        //    speed = 5;
-        //}
-
-        //if (speed != 0)
-        //{
-        //    transform.Rotate(transform.up, Time.deltaTime);
-        //    transform.position += transform.forward * speed * Time.deltaTime;
-        //}
-        MoveScooterForward(speed);
+        MoveScooterForward();
+        Steer();
+        // else
+        // {
+        //     StopScooter();
+        // }
     }
 
-    void MoveScooterForward(float speed)
+    void MoveScooterForward()
     {
         if (rightHand)
         {
-            // consider changing to rb.AddForce with force, instead of transform.position with speed
-            speed = 5;
-            transform.position += transform.forward * speed * Time.deltaTime;
-
+            rb.AddForce(transform.forward * force, ForceMode.Acceleration);
         }
-        //rb.AddForce(transform.forward * force, ForceMode.Acceleration);
-        // if (driftingEffect != null && !driftingEffect.isPlaying)
+        // if (driftingEffect && !driftingEffect.isPlaying)
         // {
         //     driftingEffect.Play();
         // }
     }
-
+    void Steer()
+    {
+        Quaternion steeringAngle = Quaternion.Euler(Vector3.up * steeringForce * Time.DeltaTime);
+        rb.MoveRotation(rb.rotation * steeringAngle);
+    }
 }
